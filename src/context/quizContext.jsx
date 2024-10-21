@@ -10,26 +10,26 @@ export const QuizContext = createContext({
 
 export const QUESTIONS_DATA = [
   {
-    id: "n-letter",
-    name: "N",
-    isIntersected: false,
-    intersectedObjects:[]
-  },
-  {
     id: "e-letter",
     name: "E",
     isIntersected: false,
     intersectedObjects:[]
   },
   {
-    id: "x-letter",
-    name: "X",
+    id: "n-letter",
+    name: "N",
     isIntersected: false,
     intersectedObjects:[]
   },
   {
     id: "t-letter",
     name: "T",
+    isIntersected: false,
+    intersectedObjects:[]
+  },
+  {
+    id: "x-letter",
+    name: "X",
     isIntersected: false,
     intersectedObjects:[]
   }

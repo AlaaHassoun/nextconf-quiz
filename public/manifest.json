@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Quiz Game",
+  "name": "Drag & Drop 3D Quiz experience from Next.js CONF24",
   "icons": [
     {
       "src": "favicon.ico",

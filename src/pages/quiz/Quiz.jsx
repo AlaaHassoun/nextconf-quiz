@@ -15,10 +15,11 @@ const mouseMovePosition = new THREE.Vector2();
 
 const Quiz = () => {
   const { onIntersectHandler, total, onReset } = useContext(QuizContext);
-  const { camera, scene } = useThree();
+  const { camera, scene, gl } = useThree();
   let movedCube = useRef(null);
   let intersectedQuestion = useRef(null);
   const questionsRef = useRef(null);
+  const gridRef = useRef(null);
 
   const intersectedObjects = useCallback((position) => {
     raycaster.setFromCamera(position, camera);
@@ -35,21 +36,24 @@ const Quiz = () => {
         movedCubeId,
         movedCube.current
       );
-      movedCube.current = null
+      movedCube.current = null;
       intersectedQuestion.current = null;
+      gl.domElement.style.cursor = "default";
       return;
     }
-  
+    
+
     mouseClickPosition.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouseClickPosition.y = -(event.clientY / window.innerHeight) * 2 + 1;
   
     const intersects = intersectedObjects(mouseClickPosition);
     if (intersects.length > 0) {
       if (intersects[0].object.userData.movedCube) {
+        gl.domElement.style.cursor = "grabbing";
         movedCube.current = intersects[0].object;
       }
     }
-  },[intersectedObjects, onIntersectHandler])
+  },[intersectedObjects, onIntersectHandler, gl])
 
   const mouseMoveHandler = useCallback((event) => {
     mouseMovePosition.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -66,7 +70,7 @@ const Quiz = () => {
             movedCube.current.position.x = target.x
             movedCube.current.position.z = target.z
             intersectedQuestion.current = null;
-          }
+          } 
         }
       }
     }
@@ -108,43 +112,40 @@ const Quiz = () => {
       if(questionsRef.current) {
         const tl = gsap.timeline();
 
-        console.log(questionsRef.current)
         tl.to(questionsRef.current.position, { 
           y: 2, 
           duration: 0.6, 
-          ease: 'power2.out'
+          ease: "power2.inOut"
         });
         
         tl.to(questionsRef.current.rotation, { 
-          x: Math.PI / 2 / 2.9,
-          y: -Math.sin(0.2),
+          x: Math.PI * 0.25,
+          y: -Math.sin(0.1),
           z: 0, 
           duration: 0.7, 
-          ease: 'power2.out'
+          ease: "power2.inOut"
         });
 
         tl.to(questionsRef.current.rotation, { 
-          x: Math.PI / 2 / 2.9,
-          y: Math.sin(0.2),
+          x: Math.PI * 0.25,
+          y: Math.sin(0.1),
           z: 0, 
           duration: 0.8, 
-          ease: 'power2.out'
+          ease: "power2.inOut"
         });
 
         tl.to(questionsRef.current.rotation, { 
-          x: Math.PI / 2 / 2.9,
+          x: Math.PI * 0.25,
           y: 0,
           z: 0, 
           duration: 0.9, 
-          ease: 'power2.out'
+          ease: "power2.inOut"
         });
         
-        tl.to(questionsRef.current.scale, { 
-          x: 100,
-          y: 100,
-          z: 100, 
+        tl.to(questionsRef.current.position, { 
+          x: 100, 
           duration: 1, 
-          ease: 'power2.out',
+          ease: "power2.inOut",
           onComplete: () => {
             onReset();
             navigate("/winner");
@@ -168,6 +169,7 @@ const Quiz = () => {
       <Questions ref={questionsRef}/>
       <Answers/>
       <Grid
+        ref={gridRef}
         position={[0,0,0]}
         gridSize={[100, 100]}
         cellSize={0.8}
@@ -178,7 +180,6 @@ const Quiz = () => {
         fadeStrength={1}
         followCamera={false}
         infiniteGrid={true}
-
       />
     </group>
   )
